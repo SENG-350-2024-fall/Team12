@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to MisterED</h1>
+        
+        <!-- Button for login -->
+        <button class="login-btn" onclick="window.location.href='{{ url_for('login') }}'">Login</button><br><br>
+        
+        <!-- Small link for register -->
+        <span>Don't have an account? <a href="{{ url_for('register') }}" class="register-link">Register</a></span>
+    </div>
+</body>
+
+</html>
