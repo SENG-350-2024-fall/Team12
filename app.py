@@ -36,6 +36,13 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
 
+class EmergencyRoom(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.String(100), nullable=False)
+    capacity = db.Column(db.Integer, nullable=False)
+    current_occupancy = db.Column(db.Integer, nullable=False)
+
 
 # makes the input for username and password
 class RegisterForm(FlaskForm):
@@ -112,10 +119,27 @@ def register():
         db.session.commit()
         return redirect(url_for('login')) # now go to the login page and log in
 
-    return render_template('register.html', form=form) # some mistake so refresh the register page
+    return render_template('register.html', form=form)
+
+@app.route('/ers')
+@login_required
+def list_ers():
+    ers = EmergencyRoom.query.all()
+    return render_template('list_ers.html', ers=ers)
+
+
+
 
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all() # creates teh database but does not overwrite
+        db.create_all()
+                # Hardcode some emergency rooms
+        if EmergencyRoom.query.count() == 0:  # To prevent duplicate entries
+            er1 = EmergencyRoom(name="General Hospital", location="123 Main St", capacity=50, current_occupancy=10)
+            er2 = EmergencyRoom(name="City Medical Center", location="456 Oak Ave", capacity=100, current_occupancy=40)
+            er3 = EmergencyRoom(name="Suburban Health Clinic", location="789 Pine Rd", capacity=30, current_occupancy=5)
+
+            db.session.add_all([er1, er2, er3])
+            db.session.commit()
     app.run(debug=True)
