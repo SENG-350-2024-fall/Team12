@@ -8,6 +8,29 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='mainstyle.css') }}">
     </head>
     <body>
-        
+        <h1>Emergency Departments</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Occupancy</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for emergency in ed %}
+                    <tr>
+                        <td>{{ emergency.name }}</td>
+                        <td>{{ emergency.location }}</td>
+                        <td>{{ emergency.occupancy }}</td>
+                        <td>{{ emergency.capacity }}</td>
+                    </tr>
+                    {% if loop.index % 4 == 0 %}
+                        </tbody><tbody>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
     </body>
 </html>
