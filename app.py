@@ -121,11 +121,11 @@ def register():
 
     return render_template('register.html', form=form)
 
-@app.route('/ers')
+@app.route('/emergency_departments', methods=['GET', 'POST'])
 @login_required
-def list_ers():
-    ers = EmergencyRoom.query.all()
-    return render_template('list_ers.html', ers=ers)
+def emergency_departments():
+    ed = EmergencyRoom.query.all()
+    return render_template('emergency_departments.html', ed=ed)
 
 
 
