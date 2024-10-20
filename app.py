@@ -134,12 +134,26 @@ def emergency_departments():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-                # Hardcode some emergency rooms
-        if EmergencyRoom.query.count() == 0:  # To prevent duplicate entries
-            er1 = EmergencyRoom(name="General Hospital", location="123 Main St", capacity=50, current_occupancy=10)
-            er2 = EmergencyRoom(name="City Medical Center", location="456 Oak Ave", capacity=100, current_occupancy=40)
-            er3 = EmergencyRoom(name="Suburban Health Clinic", location="789 Pine Rd", capacity=30, current_occupancy=5)
+        # Update current_occupancy for existing emergency rooms using a for loop
+        emergency_rooms = [
+            {"name": "General Hospital", "location": "123 Main St", "capacity": 50, "current_occupancy": 10},
+            {"name": "City Medical Center", "location": "456 Oak Ave", "capacity": 100, "current_occupancy": 40},
+            {"name": "Suburban Health Clinic", "location": "789 Pine Rd", "capacity": 30, "current_occupancy": 31},
+        ]
 
-            db.session.add_all([er1, er2, er3])
+        for room in emergency_rooms:
+            er = EmergencyRoom.query.filter_by(name=room["name"]).first()
+            if er:
+                # Update er's occupancy
+                er.current_occupancy = room["current_occupancy"]
+            else:
+                # If er doesn't exist, add it
+                new_er = EmergencyRoom(
+                    name=room["name"],
+                    location=room["location"],
+                    capacity=room["capacity"],
+                    current_occupancy=room["current_occupancy"]
+                )
+                db.session.add(new_er)
             db.session.commit()
     app.run(debug=True)
