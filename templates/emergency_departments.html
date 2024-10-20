@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Emergency Departments</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='ed.css') }}">
+    </head>
+
+    <body>
+        <header>
+                <div class="logo">
+                    <a href="{{url_for('dashboard')}}">MISTER ED</a>
+                </div>
+                <nav>
+                    <ul class="nav_links">
+                        <li><a href="{{url_for('dashboard')}}">Home</a></li>
+                        <li><a href="#">Start Triage</a></li>
+                        <li><a href="{{url_for('emergency_departments')}}">Emergency Departments</a></li>
+                    </ul>
+                </nav>
+                <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
+        </header>
+
+        <div class="table-title">
+            <a>Emergency Department Current Occupancy</a>
+        </div>
+
+        <table>
+                    
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Occupancy</th>
+                    <th>Capacity</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for emergency in ed %}
+                    <tr>
+                        <td>{{ emergency.name }}</td>
+                        <td>{{ emergency.location }}</td>
+                        <td>{{ emergency.current_occupancy }}</td>
+                        <td>{{ emergency.capacity }}</td>
+                    </tr>
+                    {% if loop.index % 4 == 0 %}
+                        </tbody><tbody>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </body>
+</html>
