@@ -11,6 +11,8 @@ The following code was modified from:
 
 Neupane, Arpan. "Python Flask Authentication Tutorial." GitHub, 2023, https://github.com/arpanneupane19/Python-Flask-Authentication-Tutorial.
 
+Specifically app set up, login, registeration, home, and user database set up.
+
 '''
 
 # creating teh flask instance - the webapp
