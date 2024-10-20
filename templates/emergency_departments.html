@@ -47,6 +47,7 @@
                         <td>{{ emergency.current_occupancy }}</td>
                         <td>{{ emergency.capacity }}</td>
                         <td>
+                            
                             {%if emergency.current_occupancy >= emergency.capacity %}
                             <span style="color: red;">At Capacity</span>
                             {% else %}
