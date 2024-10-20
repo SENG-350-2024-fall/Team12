@@ -6,6 +6,13 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 
+'''
+The following code was modified from:
+
+Neupane, Arpan. "Python Flask Authentication Tutorial." GitHub, 2023, https://github.com/arpanneupane19/Python-Flask-Authentication-Tutorial.
+
+'''
+
 # creating teh flask instance - the webapp
 app = Flask(__name__)
 
@@ -126,10 +133,6 @@ def register():
 def emergency_departments():
     ed = EmergencyRoom.query.all()
     return render_template('emergency_departments.html', ed=ed)
-
-
-
-
 
 if __name__ == "__main__":
     with app.app_context():
