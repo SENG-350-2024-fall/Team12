@@ -35,6 +35,7 @@
                     <th>Location</th>
                     <th>Occupancy</th>
                     <th>Capacity</th>
+                    <th>Status</th>
                 </tr>
             </thead>
 
@@ -45,6 +46,13 @@
                         <td>{{ emergency.location }}</td>
                         <td>{{ emergency.current_occupancy }}</td>
                         <td>{{ emergency.capacity }}</td>
+                        <td>
+                            {%if emergency.current_occupancy >= emergency.capacity %}
+                            <span style="color: red;">At Capacity</span>
+                            {% else %}
+                            <span style="color: green;">Available</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% if loop.index % 4 == 0 %}
                         </tbody><tbody>
