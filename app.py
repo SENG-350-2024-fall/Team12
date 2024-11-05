@@ -5,6 +5,11 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+import threading
+import time
+import os
+
+heartbeat_log = 'heartbeat_log.txt'
 
 '''
 The following code was modified from:
@@ -143,6 +148,14 @@ def emergency_departments():
     ed = EmergencyRoom.query.all()
     return render_template('emergency_departments.html', ed=ed)
 
+#function to send heartbeat every 60 seconds
+def heartbeat():
+    while True:
+        with open(heartbeat_log, 'a') as log_file:
+            timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+            log_file.write(f'Heartbeat at {timestamp}\n')
+        time.sleep(30)
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
@@ -168,4 +181,11 @@ if __name__ == "__main__":
                 )
                 db.session.add(new_er)
             db.session.commit()
+
+    #start heartbeat thread
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        heartbeat_thread = threading.Thread(target = heartbeat)
+        heartbeat_thread.daemon = True
+        heartbeat_thread.start()
+
     app.run(debug=True)
