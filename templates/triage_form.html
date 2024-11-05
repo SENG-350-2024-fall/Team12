@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triage Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='triage_form.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+    <style>
+        .chosen-container {
+            width: 100% !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="{{url_for('dashboard')}}">MISTER ED</a>
+        </div>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="{{url_for('dashboard')}}">Home</a></li>
+                <li><a href="{{url_for('triage_form')}}">Start Triage</a></li>
+                <li><a href="{{url_for('emergency_departments')}}">Emergency Departments</a></li>
+            </ul>
+        </nav>
+        <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
+    </header>
+    
+    <div class="triage-title">
+        <a>Triage Form</a>
+    </div>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="form-container">
+
+            <div class="select-container">
+                <div class="form-field">
+                    <label for="affected_area">My ... hurts:</label>
+                    {{ form.affected_area }}
+                </div>
+                <div class="form-field">
+                    <label for="feeling">I feel:</label>
+                    {{ form.feeling }}
+                </div>
+                <div class="form-field">
+                    <label for="conditions">I can't:</label>
+                    {{ form.conditions }}
+                </div>
+            </div>
+            
+            <div class="text-container">
+                <div class="form-field">
+                    <label for="medical_history">Medical History</label>
+                    {{ form.medical_history }}
+                </div>
+                <div class="form-field">
+                    <label for="medication">Medication</label>
+                    {{ form.medication }}
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('select').chosen({
+                width: '100%'
+            });
+        });
+    </script>
+</body>
+</html>
