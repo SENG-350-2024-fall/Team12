@@ -77,4 +77,23 @@ input[type="submit"]:hover {
     background-color: #f8d7da;
     color: #721c24;
 }
+select {
+    width: 220px; /* Adjust width to match input fields */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: black;
+    background-color: #fff;
+}
 
+/* Style for non-selectable placeholder */
+select option:first-child {
+    color:rgb(111, 111, 111);
+}
+
+/* Optional: hover effect for consistency */
+select:hover {
+    border-color: #888;
+}

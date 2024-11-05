@@ -23,6 +23,7 @@
     {% endwith %}
         <form id="form" method="POST" action="">
             {{ form.hidden_tag() }}
+            {{ form.user_type }}
             {{ form.username }}
             {{ form.password }}
             {{ form.submit }}

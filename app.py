@@ -5,6 +5,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
+from wtforms import StringField, PasswordField, SubmitField, SelectField
 
 '''
 The following code was modified from:
@@ -44,6 +45,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+    user_type = db.Column(db.String(20), nullable=False)
 
 class EmergencyRoom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -60,6 +62,13 @@ class RegisterForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+    
+    user_type = SelectField('User Type', choices=[
+    ('', 'Select User Type'),  # Placeholder option
+    ('nurse', 'Nurse'),
+    ('patient', 'Patient'),
+    ('admin', 'Admin')
+    ], validators=[InputRequired(message="Please select a user type")])
 
     submit = SubmitField('Register')
     #make sure that the username doesnt already exist
@@ -78,6 +87,7 @@ class LoginForm(FlaskForm):
 
     password = PasswordField(validators=[
                              InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+    
 
     submit = SubmitField('Login') #built in function from FlaskForm. Login is the nae on the button
 
@@ -95,7 +105,17 @@ def login():
         if user: # if a user exists 
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user) # login user once again is a built in function with flask login
-                return redirect(url_for('dashboard')) # everything is correct so go to dashboard
+
+
+                if user.user_type == 'patient':
+                    return redirect(url_for('dashboard'))
+                elif user.user_type == 'nurse':
+                    return redirect(url_for('nurse_dashboard'))
+                elif user.user_type == 'admin':
+                    return redirect(url_for('admin_dashboard'))
+                elif user.user_type == 'physician':
+                    return redirect(url_for('physician_dashboard'))
+                
             else:
                 flash('Invalid password. Please try again.', 'danger') #messaging for invalid password
         else:
@@ -108,6 +128,11 @@ def login():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/nurse_dashboard', methods=['GET', 'POST'])
+@login_required
+def nurse_dashboard():
+    return render_template('nurse_dashboard.html')
 
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -123,7 +148,11 @@ def register():
 
     if form.validate_on_submit(): # make sure valid data is inputted
         hashed_password = bcrypt.generate_password_hash(form.password.data) # encrypt password
-        new_user = User(username=form.username.data, password=hashed_password) # add to database
+        new_user = User(
+            username=form.username.data,
+            password=hashed_password,
+            user_type=form.user_type.data  # Save the selected user type
+        )
 
         try:
             db.session.add(new_user)
