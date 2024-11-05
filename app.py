@@ -195,13 +195,19 @@ def triage_form():
         '''
     return render_template('triage_form.html', form=form)
 
+#route for ping/echo
+@app.route('/admin/ping', methods=['GET'])
+@login_required
+def ping():
+    return 'echo'
+
 #function to send heartbeat every 60 seconds
 def heartbeat():
     while True:
         with open(heartbeat_log, 'a') as log_file:
             timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
             log_file.write(f'Heartbeat at {timestamp}\n')
-        time.sleep(30)
+        time.sleep(60)
 
 if __name__ == "__main__":
     with app.app_context():
