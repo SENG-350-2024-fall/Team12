@@ -1,0 +1,131 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* parent container for the form fields*/
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+}
+
+/* child container: select fields, ordered horizontally */
+.select-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* child container: textarea fields, ordered vertically */
+.text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* individual form field*/
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+/* responsive textareas */
+textarea {
+    font-family: "Open Sans";
+    width: 100%;  /* make textarea full width */
+    height: 120px;  /* set a fixed height */
+    padding: 10px;
+    box-sizing: border-box;  /* padding in width/height */
+}
+
+.triage-title {
+    display: flex;
+    justify-content: left;
+    padding: 18px 5%;
+}
+
+.triage-title a {
+    color: black;
+    line-height: 50px;
+    font-weight: 600;
+    font-size: 25px;
+}
+
+/* from ed stylesheet, including label and changing so li is not affected*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    font-family:'Open Sans';
+    color: black;
+    line-height: 25px;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+li, a, button {
+    font-family: "Open Sans";
+    font-weight: 500;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+a, button {
+    color: #edf0f1;
+}
+
+header {
+    background-color: #4CAF50;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 18px 5%;
+}
+
+.logo {
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.logo a{
+    line-height: 50px;
+    font-weight: 1000;
+    font-size: 30px;
+}
+
+.nav_links {
+    list-style: none;
+}
+
+.nav_links li {
+    display: inline;
+    padding: 0px 20px;
+}
+
+.nav_links li a {
+    transition: all 0.3s ease 0s;
+}
+
+.nav_links li a:hover {
+    color: #0088a9;
+}
+
+button {
+    margin-left: 20px;
+    padding: 9px 25px;
+    background-color: rgba(0, 136, 169, 1);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+button:hover {
+    background-color: rgba(0, 136, 169, 0.8);
+}

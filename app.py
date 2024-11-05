@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, TextAreaField
+from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
 from flask_bcrypt import Bcrypt
 import threading
 import time
@@ -86,6 +86,35 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField('Login') #built in function from FlaskForm. Login is the nae on the button
 
+class TriageForm(FlaskForm):
+    affected_area = SelectMultipleField('Choose Affected Areas', choices=[
+        ('1', 'abdomen'),('2', 'back'),('3', 'chest'),('4', 'ear'),
+        ('5', 'head'),('6', 'pelvis'),('7', 'tooth'),('8', 'rectum'),
+        ('9', 'skin'),('10', 'leg'),('11', 'arm'),('12', 'feet'),
+        ('13', 'knee'),('14', 'elbow'),('15', 'wrist'),('16', 'ankle'),
+        ('17', 'throat'),('18', 'neck'),('19','eye'),('20','nose')
+    ], coerce=int, validators=[DataRequired()])
+
+    feeling = SelectMultipleField('Choose Feelings', choices=[
+        ('1', 'chills'),('2', 'feverish'),('3','numb, tingles, electric tweaks'),('4', 'nauseous'),
+        ('5', 'dizzy - about to black out'),('6', 'dizzy - room spinning'),('7', 'light-headed'), ('8', 'dry-mouth'),
+        ('9', 'sick - flu'),('10', 'sick - want to vomit'),('11', 'short of breath'),('12', 'sleepy'),
+        ('13', 'sweaty'),('14', 'thirsy'),('15', 'tired'),('16', 'weak')
+    ], coerce=int, validators=[DataRequired()])
+
+    conditions = SelectMultipleField('Choose Conditions', choices=[
+        ('1', 'breathe normally'),('2', 'walk normally'),('3', 'move one side - arm and/or leg'),
+        ('4', 'urinate normally'),('5', 'defecate normally'),('6','excrete solid feces'),
+        ('7', ' remember normally'),('8', 'write normally'),('9', 'speak normally'),
+        ('10', 'hear normally - sounds are too loud'),('11', 'hear normally - loss of hearing'),('12', 'hear normally - ringing/hissing in ear'),
+        ('13','see properly - blindness'),('14', 'see properly - blurred vision'),('15', 'see properly - double vision'),
+        ('16', 'sleep normally'),('17', 'smell normally'),('18', 'swallow normally'),
+        ('19', 'stop scratching'),('20', 'stop sweating'), ('21', 'taste properly')
+    ])
+
+    medical_history = TextAreaField('Medical History')
+    medication = TextAreaField('Medication')
+
 #home route so the html page that will render when your at home
 @app.route('/')
 def home():
@@ -147,6 +176,24 @@ def register():
 def emergency_departments():
     ed = EmergencyRoom.query.all()
     return render_template('emergency_departments.html', ed=ed)
+
+@app.route('/triage_form', methods=['GET', 'POST'])
+def triage_form():
+    form = TriageForm(request.form)
+    if form.validate_on_submit():
+        selected_options_1 = form.affected_area.data
+        selected_options_2 = form.feeling.data
+        selected_options_3 = form.conditions.data
+        medical_history = form.medical_history.data
+        medication = form.medication.data
+        return f'''
+            Selected Affected Areas: {", ".join(map(str, selected_options_1))}<br>
+            Selected Feelings: {", ".join(map(str, selected_options_2))}<br>
+            Selected Conditions: {", ".join(map(str, selected_options_3))}<br>
+            Medical History: {medical_history}<br>
+            Medication: {medication}
+        '''
+    return render_template('triage_form.html', form=form)
 
 #function to send heartbeat every 60 seconds
 def heartbeat():
