@@ -150,9 +150,16 @@ def register():
     if form.validate_on_submit(): # make sure valid data is inputted
         hashed_password = bcrypt.generate_password_hash(form.password.data) # encrypt password
         new_user = User(username=form.username.data, password=hashed_password) # add to database
-        db.session.add(new_user)
-        db.session.commit()
-        return redirect(url_for('login')) # now go to the login page and log in
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect(url_for('login')) # now go to the login page and log in
+        
+        except Exception as e:
+            db.session.rollback() #rollback on transaction error
+            flash("An error occurred during registration. Please try again", "danger")
+            print(f"Error: {e}") # log error for debugging
 
     return render_template('register.html', form=form)
 
