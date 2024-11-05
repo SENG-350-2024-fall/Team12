@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Triage Form</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='triage_form.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
     <style>
@@ -28,22 +29,43 @@
         </nav>
         <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
     </header>
-    <h1>Triage Form</h1>
+    
+    <div class="triage-title">
+        <a>Triage Form</a>
+    </div>
 
     <form method="POST">
         {{ form.hidden_tag() }}
-        <div>
-            <label for="affected_area">My ... hurts</label>
-            {{ form.affected_area }}
+
+        <div class="form-container">
+
+            <div class="select-container">
+                <div class="form-field">
+                    <label for="affected_area">My ... hurts:</label>
+                    {{ form.affected_area }}
+                </div>
+                <div class="form-field">
+                    <label for="feeling">I feel:</label>
+                    {{ form.feeling }}
+                </div>
+                <div class="form-field">
+                    <label for="conditions">I can't:</label>
+                    {{ form.conditions }}
+                </div>
+            </div>
+            
+            <div class="text-container">
+                <div class="form-field">
+                    <label for="medical_history">Medical History</label>
+                    {{ form.medical_history }}
+                </div>
+                <div class="form-field">
+                    <label for="medication">Medication</label>
+                    {{ form.medication }}
+                </div>
+            </div>
         </div>
-        <div>
-            <label for="feeling">I feel</label>
-            {{ form.feeling }}
-        </div>
-        <div>
-            <label for="conditions">I can't</label>
-            {{ form.conditions }}
-        </div>
+        
         <button type="submit">Submit</button>
     </form>
 

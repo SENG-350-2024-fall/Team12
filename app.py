@@ -2,7 +2,7 @@ from flask import Flask, render_template, url_for, redirect, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, TextAreaField
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
 from flask_bcrypt import Bcrypt
 
@@ -107,6 +107,9 @@ class TriageForm(FlaskForm):
         ('19', 'stop scratching'),('20', 'stop sweating'), ('21', 'taste properly')
     ])
 
+    medical_history = TextAreaField('Medical History')
+    medication = TextAreaField('Medication')
+
 #home route so the html page that will render when your at home
 @app.route('/')
 def home():
@@ -176,9 +179,15 @@ def triage_form():
         selected_options_1 = form.affected_area.data
         selected_options_2 = form.feeling.data
         selected_options_3 = form.conditions.data
-        return f'Selected Options 1: {", ".join(map(str, selected_options_1))}<br>' \
-               f'Selected Options 2: {", ".join(map(str, selected_options_2))}<br>' \
-               f'Selected Options 3: {", ".join(map(str, selected_options_3))}'
+        medical_history = form.medical_history.data
+        medication = form.medication.data
+        return f'''
+            Selected Affected Areas: {", ".join(map(str, selected_options_1))}<br>
+            Selected Feelings: {", ".join(map(str, selected_options_2))}<br>
+            Selected Conditions: {", ".join(map(str, selected_options_3))}<br>
+            Medical History: {medical_history}<br>
+            Medication: {medication}
+        '''
     return render_template('triage_form.html', form=form)
 
 if __name__ == "__main__":
