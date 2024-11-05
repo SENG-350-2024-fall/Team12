@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triage Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+    <style>
+        .chosen-container {
+            width: 100% !important;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="{{url_for('dashboard')}}">MISTER ED</a>
+        </div>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="{{url_for('dashboard')}}">Home</a></li>
+                <li><a href="{{url_for('triage_form')}}">Start Triage</a></li>
+                <li><a href="{{url_for('emergency_departments')}}">Emergency Departments</a></li>
+            </ul>
+        </nav>
+        <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
+    </header>
+    <h1>Triage Form</h1>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            <label for="affected_area">My ... hurts</label>
+            {{ form.affected_area }}
+        </div>
+        <div>
+            <label for="feeling">I feel</label>
+            {{ form.feeling }}
+        </div>
+        <div>
+            <label for="conditions">I can't</label>
+            {{ form.conditions }}
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('select').chosen({
+                width: '100%'
+            });
+        });
+    </script>
+</body>
+</html>
