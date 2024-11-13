@@ -1,24 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Nurse Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
-
 <body>
     <header>
-            
+        <h2>Nurse Dashboard</h2>
     </header>
-    
+
     <div class="content-area">
-        <h2>for NURSES</h2>
-        <p>View the current capacity of emergency departments from the comfort of your home.</p>
+        <h3>Queued Triage Forms</h3>
+        {% if triage_entries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient ID</th>
+                    <th>Affected Area</th>
+                    <th>Feeling</th>
+                    <th>Conditions</th>
+                    <th>Medical History</th>
+                    <th>Medication</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in triage_entries %}
+                <tr>
+                    <td>{{ entry.user_id }}</td>
+                    <td>{{ entry.affected_area }}</td>
+                    <td>{{ entry.feeling }}</td>
+                    <td>{{ entry.conditions }}</td>
+                    <td>{{ entry.medical_history }}</td>
+                    <td>{{ entry.medication }}</td>
+                    <td>{{ entry.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No triage forms available.</p>
+        {% endif %}
     </div>
-
 </body>
-
 </html>
