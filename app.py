@@ -125,6 +125,17 @@ class TriageForm(FlaskForm):
     medical_history = TextAreaField('Medical History')
     medication = TextAreaField('Medication')
 
+class TriageEntry(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Assuming each entry is tied to a user
+    affected_area = db.Column(db.String(200), nullable=False)
+    feeling = db.Column(db.String(200), nullable=False)
+    conditions = db.Column(db.String(200), nullable=False)
+    medical_history = db.Column(db.Text, nullable=True)
+    medication = db.Column(db.Text, nullable=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+
 #home route so the html page that will render when your at home
 @app.route('/')
 def home():
@@ -166,7 +177,14 @@ def dashboard():
 @app.route('/nurse_dashboard', methods=['GET', 'POST'])
 @login_required
 def nurse_dashboard():
-    return render_template('nurse_dashboard.html')
+    if current_user.user_type != 'nurse':
+        flash("Access restricted to nurses only.", "danger")
+        return redirect(url_for('dashboard'))
+
+    # Retrieve all triage entries from the database
+    triage_entries = TriageEntry.query.all()
+    return render_template('nurse_dashboard.html', triage_entries=triage_entries)
+
 
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -207,22 +225,44 @@ def emergency_departments():
     return render_template('emergency_departments.html', ed=ed)
 
 @app.route('/triage_form', methods=['GET', 'POST'])
+@login_required
 def triage_form():
     form = TriageForm(request.form)
     if form.validate_on_submit():
+        
+        selected_options_1 = ','.join(map(str, form.affected_area.data))
+        selected_options_2 = ','.join(map(str, form.feeling.data))
+        selected_options_3 = ','.join(map(str, form.conditions.data))
+        """
         selected_options_1 = form.affected_area.data
         selected_options_2 = form.feeling.data
         selected_options_3 = form.conditions.data
+        """
         medical_history = form.medical_history.data
         medication = form.medication.data
-        return f'''
-            Selected Affected Areas: {", ".join(map(str, selected_options_1))}<br>
-            Selected Feelings: {", ".join(map(str, selected_options_2))}<br>
-            Selected Conditions: {", ".join(map(str, selected_options_3))}<br>
-            Medical History: {medical_history}<br>
-            Medication: {medication}
-        '''
+        
+        # Create a new triage entry
+        new_entry = TriageEntry(
+            user_id=current_user.id,
+            affected_area=selected_options_1,
+            feeling=selected_options_2,
+            conditions=selected_options_3,
+            medical_history=medical_history,
+            medication=medication
+        )
+        
+        try:
+            db.session.add(new_entry)
+            db.session.commit()
+            flash('Triage form submitted successfully!', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred. Please try again.', 'danger')
+            print(f"Error: {e}")
+
     return render_template('triage_form.html', form=form)
+
 
 #route for ping/echo
 @app.route('/admin/ping', methods=['GET'])
