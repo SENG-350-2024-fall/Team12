@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="{{url_for('admin_dashboard')}}">MISTER ED</a>
+        </div>
+        <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
+    </header>
+
+    <div class="content-area">
+        <h1>Admin Dashboard</h1>
+        <form method="post" style="margin-bottom: 30px; margin-top: 30px;">
+            <button type="submit" name="ping_button">Ping System</button>
+            <button type="submit" name="heartbeat_button">View Hearbeat Log</button>
+        </form>
+
+        {% if ping_result %}
+            <h3>Ping Result:</h3>
+            <p>{{ ping_result }}</p>
+        {% endif %}
+
+        {% if heartbeat_result %}
+            <h3>Heartbeat Log:</h3>
+            <pre>{{ heartbeat_result }}</pre>
+        {% endif %}
+
+    </div>
+</body>
+</html>

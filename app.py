@@ -185,6 +185,28 @@ def nurse_dashboard():
     triage_entries = TriageEntry.query.all()
     return render_template('nurse_dashboard.html', triage_entries=triage_entries)
 
+@app.route('/admin_dashboard', methods=['GET', 'POST'])
+@login_required
+def admin_dashboard():
+    if current_user.user_type != 'admin':
+        flash("Access restricted to admins only.", "danger")
+        return redirect(url_for('dashboard'))
+    
+    ping_result = None
+    heartbeat_result = None
+
+    if request.method == 'POST':
+        if 'ping_button' in request.form:
+            ping_result = 'echo'
+
+        elif 'heartbeat_button' in request.form:
+            if os.path.exists(heartbeat_log):
+                with open(heartbeat_log, 'r') as log_file:
+                    heartbeat_result = log_file.read()
+            else:
+                heartbeat_result = 'Heartbeat log not found'
+
+    return render_template('admin_dashboard.html', ping_result = ping_result, heartbeat_result = heartbeat_result)
 
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -268,6 +290,9 @@ def triage_form():
 @app.route('/admin/ping', methods=['GET'])
 @login_required
 def ping():
+    if current_user.user_type != 'admin':
+        flash("Access restricted to admins only.", "danger")
+        return redirect(url_for('dashboard'))
     return 'echo'
 
 #function to send heartbeat every 60 seconds
@@ -281,7 +306,7 @@ def heartbeat():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        # Update current_occupancy for existing emergency rooms using a for loop
+        # Update current_occupancy for existing emergency rooms
         emergency_rooms = [
             {"name": "General Hospital", "location": "123 Main St", "capacity": 50, "current_occupancy": 10},
             {"name": "City Medical Center", "location": "456 Oak Ave", "capacity": 100, "current_occupancy": 40},
