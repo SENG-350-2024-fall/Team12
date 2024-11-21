@@ -23,8 +23,17 @@
         </nav>
         <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
     </header>
-    
+
     <div class="content-area">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashed-messages">
+                    {% for message in messages %}
+                        <li class="message">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
         <h2>Welcome to Mister Ed.</h2>
         <p>View the current capacity of emergency departments from the comfort of your home.</p>
     </div>
