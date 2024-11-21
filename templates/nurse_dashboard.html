@@ -15,32 +15,56 @@
     <div class="content-area">
         <h3>Queued Triage Forms</h3>
         {% if triage_entries %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Patient ID</th>
-                    <th>Affected Area</th>
-                    <th>Feeling</th>
-                    <th>Conditions</th>
-                    <th>Medical History</th>
-                    <th>Medication</th>
-                    <th>Timestamp</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in triage_entries %}
-                <tr>
-                    <td>{{ entry.user_id }}</td>
-                    <td>{{ entry.affected_area }}</td>
-                    <td>{{ entry.feeling }}</td>
-                    <td>{{ entry.conditions }}</td>
-                    <td>{{ entry.medical_history }}</td>
-                    <td>{{ entry.medication }}</td>
-                    <td>{{ entry.timestamp }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="forms-container">
+            {% for entry in triage_entries %}
+            <div class="form-box">
+                <h4>Patient ID: {{ entry.user_id }}</h4>
+                <div class="form-section">
+                    <h5>Affected Areas</h5>
+                    {% set affected_areas = entry.affected_area.split(',') %}
+                    <ul>
+                        {% for area_id in affected_areas %}
+                            {% set area_id = area_id.strip() %}  {# Remove extra spaces #}
+                            {% set area_name = affected_area_map.get(area_id, "Unknown") %}
+                            <li>{{ area_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="form-section">
+                    <h5>Feelings</h5>
+                    {% set feelings = entry.feeling.split(',') %}
+                    <ul>
+                        {% for feeling_id in feelings %}
+                        {% set feeling_name = feeling_map.get(feeling_id, "Unknown") %}
+                        <li>{{ feeling_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="form-section">
+                    <h5>Conditions</h5>
+                    {% set conditions = entry.conditions.split(',') %}
+                    <ul>
+                        {% for condition_id in conditions %}
+                        {% set condition_name = condition_map.get(condition_id, "Unknown") %}
+                        <li>{{ condition_name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>                
+                <div class="form-section">
+                    <h5>Medical History</h5>
+                    <p>{{ entry.medical_history }}</p>
+                </div>
+                <div class="form-section">
+                    <h5>Medication</h5>
+                    <p>{{ entry.medication }}</p>
+                </div>
+                <div class="form-section">
+                    <h5>Timestamp</h5>
+                    <p>{{ entry.timestamp }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         {% else %}
         <p>No triage forms available.</p>
         {% endif %}
