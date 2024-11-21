@@ -181,9 +181,85 @@ def nurse_dashboard():
         flash("Access restricted to nurses only.", "danger")
         return redirect(url_for('dashboard'))
 
-    # Retrieve all triage entries from the database
     triage_entries = TriageEntry.query.all()
-    return render_template('nurse_dashboard.html', triage_entries=triage_entries)
+
+    # Human-readable mappings
+    AFFECTED_AREA_MAP = {
+    '1': 'abdomen',
+    '2': 'back',
+    '3': 'chest',
+    '4': 'ear',
+    '5': 'head',
+    '6': 'pelvis',
+    '7': 'tooth',
+    '8': 'rectum',
+    '9': 'skin',
+    '10': 'leg',
+    '11': 'arm',
+    '12': 'feet',
+    '13': 'knee',
+    '14': 'elbow',
+    '15': 'wrist',
+    '16': 'ankle',
+    '17': 'throat',
+    '18': 'neck',
+    '19': 'eye',
+    '20': 'nose'
+}
+
+    FEELING_MAP =  {
+    '1': 'chills',
+    '2': 'feverish',
+    '3': 'numb, tingles, electric tweaks',
+    '4': 'nauseous',
+    '5': 'dizzy - about to black out',
+    '6': 'dizzy - room spinning',
+    '7': 'light-headed',
+    '8': 'dry-mouth',
+    '9': 'sick - flu',
+    '10': 'sick - want to vomit',
+    '11': 'short of breath',
+    '12': 'sleepy',
+    '13': 'sweaty',
+    '14': 'thirsty',
+    '15': 'tired',
+    '16': 'weak'
+}
+
+    CONDITION_MAP =  {
+    '1': 'breathe normally',
+    '2': 'walk normally',
+    '3': 'move one side - arm and/or leg',
+    '4': 'urinate normally',
+    '5': 'defecate normally',
+    '6': 'excrete solid feces',
+    '7': 'remember normally',
+    '8': 'write normally',
+    '9': 'speak normally',
+    '10': 'hear normally - sounds are too loud',
+    '11': 'hear normally - loss of hearing',
+    '12': 'hear normally - ringing/hissing in ear',
+    '13': 'see properly - blindness',
+    '14': 'see properly - blurred vision',
+    '15': 'see properly - double vision',
+    '16': 'sleep normally',
+    '17': 'smell normally',
+    '18': 'swallow normally',
+    '19': 'stop scratching',
+    '20': 'stop sweating',
+    '21': 'taste properly'
+}
+    
+
+
+    # Pass data and mappings to template
+    return render_template(
+        'nurse_dashboard.html',
+        triage_entries=triage_entries,
+        affected_area_map=AFFECTED_AREA_MAP,
+        feeling_map=FEELING_MAP,
+        condition_map=CONDITION_MAP
+    )
 
 @app.route('/admin_dashboard', methods=['GET', 'POST'])
 @login_required

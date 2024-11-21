@@ -63,7 +63,94 @@ button {
 
 button:hover {
     background-color: rgba(0, 136, 169, 0.8);
+}/* General Page Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
 }
+
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.content-area {
+    padding: 20px;
+}
+
+h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Forms Container */
+.forms-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Individual Form Box */
+.form-box {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+.form-box h4 {
+    color: #4CAF50;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Form Section Styling */
+.form-section {
+    margin-bottom: 15px;
+}
+
+.form-section h5 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    color: #555;
+    text-decoration: underline;
+}
+
+.form-section ul {
+    list-style-type: disc;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.form-section ul li {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.form-section p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* No Forms Available Message */
+p {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+}
+
 
 .content-area{
     display: flex;
@@ -77,7 +164,94 @@ button:hover {
 }
 
 .content-area h2, p {
-    font-family: Open Sans;
+    font-family: Open Sans;/* General Page Styling */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+    }
+    
+    header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .content-area {
+        padding: 20px;
+    }
+    
+    h3 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+    
+    /* Forms Container */
+    .forms-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    /* Individual Form Box */
+    .form-box {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        width: 100%;
+        max-width: 400px;
+        box-sizing: border-box;
+    }
+    
+    .form-box h4 {
+        color: #4CAF50;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    /* Form Section Styling */
+    .form-section {
+        margin-bottom: 15px;
+    }
+    
+    .form-section h5 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        color: #555;
+        text-decoration: underline;
+    }
+    
+    .form-section ul {
+        list-style-type: disc;
+        margin: 0;
+        padding-left: 20px;
+    }
+    
+    .form-section ul li {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .form-section p {
+        margin: 0;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    /* No Forms Available Message */
+    p {
+        font-size: 16px;
+        color: #666;
+        text-align: center;
+    }
+    
     margin: 0;
     padding-top: 20px;
 }
