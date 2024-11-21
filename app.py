@@ -286,7 +286,7 @@ def admin_dashboard():
 
 @app.route('/physician_dashboard', methods=['GET', 'POST'])
 @login_required
-def nurse_dashboard():
+def physician_dashboard():
     return render_template('physician_dashboard.html')
 
 # log out page 
