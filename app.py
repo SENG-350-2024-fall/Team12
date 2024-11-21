@@ -168,6 +168,11 @@ def dashboard():
 def nurse_dashboard():
     return render_template('nurse_dashboard.html')
 
+@app.route('/physician_dashboard', methods=['GET', 'POST'])
+@login_required
+def nurse_dashboard():
+    return render_template('physician_dashboard.html')
+
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
