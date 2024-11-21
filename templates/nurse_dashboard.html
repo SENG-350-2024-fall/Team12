@@ -62,6 +62,16 @@
                     <h5>Timestamp</h5>
                     <p>{{ entry.timestamp }}</p>
                 </div>
+                <div class="form-section">
+                    <h5>Status</h5>
+                    <p>{{ entry.status }}</p>  <!-- Display the status here -->
+                </div>
+                <div class="form-section">
+                        <form action="{{ url_for('admit_form', entry_id=entry.id) }}" method="POST">
+                        <button type="submit">Admit to ER</button>
+                    </form>
+                </div>
+                
             </div>
             {% endfor %}
         </div>

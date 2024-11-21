@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
 from flask_bcrypt import Bcrypt
 from wtforms import StringField, PasswordField, SubmitField, SelectField
+from sqlalchemy import Integer, String, DateTime
 import threading
 import time
 import os
@@ -58,6 +59,17 @@ class EmergencyRoom(db.Model):
     location = db.Column(db.String(100), nullable=False)
     capacity = db.Column(db.Integer, nullable=False)
     current_occupancy = db.Column(db.Integer, nullable=False)
+
+class ERAdmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    affected_area = db.Column(db.String, nullable=False)
+    feeling = db.Column(db.String, nullable=False)
+    conditions = db.Column(db.String, nullable=False)
+    medical_history = db.Column(db.String, nullable=True)
+    medication = db.Column(db.String, nullable=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
 
 
 # makes the input for username and password
@@ -133,6 +145,7 @@ class TriageEntry(db.Model):
     conditions = db.Column(db.String(200), nullable=False)
     medical_history = db.Column(db.Text, nullable=True)
     medication = db.Column(db.Text, nullable=True)
+    status = db.Column(db.Text, default='Waiting for Admission')
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 
@@ -173,6 +186,35 @@ def login():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+# Route to handle the admit form request
+@app.route('/admit_form/<int:entry_id>', methods=['POST'])
+def admit_form(entry_id):
+    # Fetch the triage entry from the database
+    triage_entry = TriageEntry.query.get(entry_id)
+
+    if triage_entry:
+        # Create a new ERAdmission record with the data from the triage entry
+        er_admission = ERAdmission(
+            user_id=triage_entry.user_id,
+            affected_area=triage_entry.affected_area,
+            feeling=triage_entry.feeling,
+            conditions=triage_entry.conditions,
+            medical_history=triage_entry.medical_history,
+            medication=triage_entry.medication,
+            timestamp=triage_entry.timestamp,
+        )
+        
+        # Add the ER admission to the database
+        db.session.add(er_admission)
+        #db.session.commit()
+
+       
+        triage_entry.status = 'Admitted' 
+        db.session.commit()
+
+    # Redirect back to the nurse dashboard
+    return redirect(url_for('nurse_dashboard'))
 
 @app.route('/nurse_dashboard', methods=['GET', 'POST'])
 @login_required
@@ -351,7 +393,8 @@ def triage_form():
             feeling=selected_options_2,
             conditions=selected_options_3,
             medical_history=medical_history,
-            medication=medication
+            medication=medication,
+            status='Waiting for Admission'
         )
         
         try:
