@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="{{url_for('physician_dashboard')}}">MISTER ED</a>
+        </div>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="{{url_for('physician_dashboard')}}">Home</a></li>
+                <li><a href="{{url_for('triage_form')}}">View Patients</a></li>
+            </ul>
+        </nav>
+        <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
+    </header>
+    
+    <div class="content-area">
+        <h2>Welcome to Mister Ed.</h2>
+        <p>Keep notes for your patients and keep medical history organized and accessible with Mister Ed.</p>
+        
+    </div>
+
+</body>
+
+</html>

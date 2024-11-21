@@ -284,6 +284,11 @@ def admin_dashboard():
 
     return render_template('admin_dashboard.html', ping_result = ping_result, heartbeat_result = heartbeat_result)
 
+@app.route('/physician_dashboard', methods=['GET', 'POST'])
+@login_required
+def nurse_dashboard():
+    return render_template('physician_dashboard.html')
+
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
