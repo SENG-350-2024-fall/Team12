@@ -223,7 +223,7 @@ def nurse_dashboard():
         flash("Access restricted to nurses only.", "danger")
         return redirect(url_for('dashboard'))
 
-    triage_entries = TriageEntry.query.all()
+    triage_entries = TriageEntry.query.filter(TriageEntry.status != 'Admitted').all()
 
     # Human-readable mappings
     AFFECTED_AREA_MAP = {
