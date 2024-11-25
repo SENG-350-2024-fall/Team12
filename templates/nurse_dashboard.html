@@ -10,6 +10,9 @@
 <body>
     <header>
         <h2>Nurse Dashboard</h2>
+        <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
     </header>
 
     <div class="content-area">
