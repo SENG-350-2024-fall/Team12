@@ -34,8 +34,44 @@
                 </ul>
             {% endif %}
         {% endwith %}
-        <h2>Welcome to Mister Ed.</h2>
-        <p>View the current capacity of emergency departments from the comfort of your home.</p>
+
+        {% if current_user.is_authenticated and current_user.user_type == 'patient' %}
+            <h2>My Medical Information</h2>
+            
+            {% if er_admissions %}
+                <div class="medical-notes-section">
+                    <h3>My ER Admissions and Notes</h3>
+                    {% for admission in er_admissions %}
+                        <div class="admission-card">
+                            <h4>Admission Details</h4>
+                            <p><strong>Date:</strong> {{ admission.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <p><strong>Affected Areas:</strong> {{ admission.affected_area }}</p>
+                            <p><strong>Feelings:</strong> {{ admission.feeling }}</p>
+                            <p><strong>Conditions:</strong> {{ admission.conditions }}</p>
+
+                            {% if patient_notes.get(admission.id) %}
+                                <div class="physician-notes">
+                                    <h4>Physician Notes</h4>
+                                    {% for note in patient_notes.get(admission.id) %}
+                                        <div class="note">
+                                            <p>{{ note.note_text }}</p>
+                                            <small>Added on {{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p>No physician notes for this admission yet.</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You have no current ER admissions.</p>
+            {% endif %}
+        {% else %}
+            <h2>Welcome to Mister Ed.</h2>
+            <p>View the current capacity of emergency departments from the comfort of your home.</p>
+        {% endif %}
     </div>
 
 </body>

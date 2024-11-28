@@ -75,6 +75,7 @@ class PhysicianNote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     er_admission_id = db.Column(db.Integer, db.ForeignKey('er_admission.id'), nullable=False)
     physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Add this line
     note_text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
@@ -199,6 +200,20 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
+    if current_user.user_type == 'patient':
+        # Fetch ER admissions for the current patient
+        er_admissions = ERAdmission.query.filter_by(user_id=current_user.id).all()
+        
+        # Fetch notes for these admissions
+        patient_notes = {}
+        for admission in er_admissions:
+            notes = PhysicianNote.query.filter_by(patient_id=current_user.id).all()
+            patient_notes[admission.id] = notes
+        
+        return render_template('dashboard.html', 
+                               er_admissions=er_admissions, 
+                               patient_notes=patient_notes)
+    
     return render_template('dashboard.html')
 
 # Route to handle the admit form request
@@ -448,15 +463,19 @@ def add_physician_note(admission_id):
 
     form = PhysicianNoteForm()
     if form.validate_on_submit():
-        # Create a new physician note
-        new_note = PhysicianNote(
-            er_admission_id=admission_id,
-            physician_id=current_user.id,
-            note_text=form.note_text.data
-        )
-        db.session.add(new_note)
-        db.session.commit()
-        
+        # Find the ER admission to get the patient_id
+        er_admission = ERAdmission.query.get(admission_id)
+        if er_admission:
+            # Create a new physician note
+            new_note = PhysicianNote(
+                er_admission_id=admission_id,
+                physician_id=current_user.id,
+                patient_id=er_admission.user_id,  # Add the patient_id
+                note_text=form.note_text.data
+            )
+            db.session.add(new_note)
+            db.session.commit()
+            
 
     return redirect(url_for('physician_dashboard'))
 
