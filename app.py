@@ -70,21 +70,17 @@ class ERAdmission(db.Model):
     medication = db.Column(db.String, nullable=True)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-
 class PhysicianNote(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     er_admission_id = db.Column(db.Integer, db.ForeignKey('er_admission.id'), nullable=False)
     physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Add this line
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     note_text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
-
 
 class PhysicianNoteForm(FlaskForm):
     note_text = TextAreaField('Medical Notes', validators=[DataRequired()])
     submit = SubmitField('Add Note')
-
-
 
 # makes the input for username and password
 class RegisterForm(FlaskForm):
@@ -536,6 +532,11 @@ def emergency_departments():
 @app.route('/triage_form', methods=['GET', 'POST'])
 @login_required
 def triage_form():
+    # Check if user already submitted a form
+    if TriageEntry.query.filter_by(user_id=current_user.id, status='Waiting for Admission').first():
+        flash('A triage form has already been submitted. Please wait for updates.', 'danger')
+        return redirect(url_for('dashboard'))
+
     form = TriageForm(request.form)
     if form.validate_on_submit():
         
@@ -573,6 +574,11 @@ def triage_form():
 
     return render_template('triage_form.html', form=form)
 
+@app.route('/view_notes', methods=['GET', 'POST'])
+@login_required
+def view_notes():
+    visit_notes = PhysicianNote.query.filter_by(patient_id=current_user.id).all()
+    return render_template('view_notes.html', visit_notes=visit_notes)
 
 #route for ping/echo
 @app.route('/admin/ping', methods=['GET'])

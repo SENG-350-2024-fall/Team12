@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Emergency Departments</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="{{ url_for('dashboard') }}">MISTER ED</a>
+        </div>
+        <nav>
+            <ul class="nav_links">
+                <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+                <li><a href="{{ url_for('triage_form') }}">Start Triage</a></li>
+                <li><a href="{{ url_for('emergency_departments') }}">Emergency Departments</a></li>
+                <li><a href="{{ url_for('view_notes') }}">View Notes</a></li>
+            </ul>
+        </nav>
+        <a class="logout" href="{{ url_for('logout') }}"><button>Logout</button></a>
+    </header>
+
+    {% if visit_notes %}
+        <div class="table-title">
+            <h2>Your Notes</h2>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Admission ID</th>
+                    <th>Date</th>
+                    <th>Physician</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for note in visit_notes %}
+                <tr>
+                    <td>{{ note.er_admission_id }}</td>
+                    <td>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ note.physician_id }}</td>
+                    <td>{{ note.note_text }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-notes" style="text-align: center; margin-top: 50px; font-size: 18px; color: #555;">
+            <h3>No visit notes are available at the moment.</h3>
+        </div>
+    {% endif %}
+</body>
+</html>
