@@ -70,7 +70,13 @@ class ERAdmission(db.Model):
     medication = db.Column(db.String, nullable=True)
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-
+class VisitNote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    admission_id = db.Column(db.Integer, db.ForeignKey('er_admission.id'), nullable=False)
+    note = db.Column(db.Text, nullable=True)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 # makes the input for username and password
 class RegisterForm(FlaskForm):
@@ -414,11 +420,11 @@ def triage_form():
 
     return render_template('triage_form.html', form=form)
 
-#@app.route('/view_notes', methods=['GET', 'POST'])
-#@login_required
-#def view_notes():
-#    visit_notes = VisitNote.query.filter_by(patient_id=current_user.id).all()
-#    return render_template('view_notes.html', visit_notes=visit_notes)
+@app.route('/view_notes', methods=['GET', 'POST'])
+@login_required
+def view_notes():
+    visit_notes = VisitNote.query.filter_by(patient_id=current_user.id).all()
+    return render_template('view_notes.html', visit_notes=visit_notes)
 
 #route for ping/echo
 @app.route('/admin/ping', methods=['GET'])
