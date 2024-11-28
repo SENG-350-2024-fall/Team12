@@ -71,6 +71,19 @@ class ERAdmission(db.Model):
     timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 
+class PhysicianNote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    er_admission_id = db.Column(db.Integer, db.ForeignKey('er_admission.id'), nullable=False)
+    physician_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    note_text = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+
+class PhysicianNoteForm(FlaskForm):
+    note_text = TextAreaField('Medical Notes', validators=[DataRequired()])
+    submit = SubmitField('Add Note')
+
+
 
 # makes the input for username and password
 class RegisterForm(FlaskForm):
@@ -84,7 +97,8 @@ class RegisterForm(FlaskForm):
     ('', 'Select User Type'),  # Placeholder option
     ('nurse', 'Nurse'),
     ('patient', 'Patient'),
-    ('admin', 'Admin')
+    ('admin', 'Admin'),
+    ('physician','Physician')
     ], validators=[InputRequired(message="Please select a user type")])
 
     submit = SubmitField('Register')
@@ -329,7 +343,138 @@ def admin_dashboard():
 @app.route('/physician_dashboard', methods=['GET', 'POST'])
 @login_required
 def physician_dashboard():
-    return render_template('physician_dashboard.html')
+    if current_user.user_type != 'physician':
+        flash("Access restricted to physicians only.", "danger")
+        return redirect(url_for('dashboard'))
+    # Human-readable mappings
+    AFFECTED_AREA_MAP = {
+    '1': 'abdomen',
+    '2': 'back',
+    '3': 'chest',
+    '4': 'ear',
+    '5': 'head',
+    '6': 'pelvis',
+    '7': 'tooth',
+    '8': 'rectum',
+    '9': 'skin',
+    '10': 'leg',
+    '11': 'arm',
+    '12': 'feet',
+    '13': 'knee',
+    '14': 'elbow',
+    '15': 'wrist',
+    '16': 'ankle',
+    '17': 'throat',
+    '18': 'neck',
+    '19': 'eye',
+    '20': 'nose'
+}
+
+    FEELING_MAP =  {
+    '1': 'chills',
+    '2': 'feverish',
+    '3': 'numb, tingles, electric tweaks',
+    '4': 'nauseous',
+    '5': 'dizzy - about to black out',
+    '6': 'dizzy - room spinning',
+    '7': 'light-headed',
+    '8': 'dry-mouth',
+    '9': 'sick - flu',
+    '10': 'sick - want to vomit',
+    '11': 'short of breath',
+    '12': 'sleepy',
+    '13': 'sweaty',
+    '14': 'thirsty',
+    '15': 'tired',
+    '16': 'weak'
+}
+
+    CONDITION_MAP =  {
+    '1': 'breathe normally',
+    '2': 'walk normally',
+    '3': 'move one side - arm and/or leg',
+    '4': 'urinate normally',
+    '5': 'defecate normally',
+    '6': 'excrete solid feces',
+    '7': 'remember normally',
+    '8': 'write normally',
+    '9': 'speak normally',
+    '10': 'hear normally - sounds are too loud',
+    '11': 'hear normally - loss of hearing',
+    '12': 'hear normally - ringing/hissing in ear',
+    '13': 'see properly - blindness',
+    '14': 'see properly - blurred vision',
+    '15': 'see properly - double vision',
+    '16': 'sleep normally',
+    '17': 'smell normally',
+    '18': 'swallow normally',
+    '19': 'stop scratching',
+    '20': 'stop sweating',
+    '21': 'taste properly'
+}
+    # Fetch all ER admissions
+    er_admissions = ERAdmission.query.all()
+    for admission in er_admissions:
+        # Split the comma-separated values
+        affected_areas = [AFFECTED_AREA_MAP.get(area.strip(), area) for area in admission.affected_area.split(',')]
+        feelings = [FEELING_MAP.get(feeling.strip(), feeling) for feeling in admission.feeling.split(',')]
+        conditions = [CONDITION_MAP.get(condition.strip(), condition) for condition in admission.conditions.split(',')]
+
+        # Rejoin the lists into comma-separated strings
+        admission.affected_area = ', '.join(affected_areas)
+        admission.feeling = ', '.join(feelings)
+        admission.conditions = ', '.join(conditions)
+
+    # Fetch notes for each admission
+    admission_notes = {}
+    for admission in er_admissions:
+        notes = PhysicianNote.query.filter_by(er_admission_id=admission.id).all()
+        admission_notes[admission.id] = notes
+
+    # Prepare a form for notes
+    note_form = PhysicianNoteForm()
+
+    return render_template('physician_dashboard.html', 
+                           er_admissions=er_admissions, 
+                           admission_notes=admission_notes,
+                           note_form=note_form)
+
+@app.route('/add_physician_note/<int:admission_id>', methods=['POST'])
+@login_required
+def add_physician_note(admission_id):
+    if current_user.user_type != 'physician':
+        flash("Access restricted to physicians only.", "danger")
+        return redirect(url_for('dashboard'))
+
+    form = PhysicianNoteForm()
+    if form.validate_on_submit():
+        # Create a new physician note
+        new_note = PhysicianNote(
+            er_admission_id=admission_id,
+            physician_id=current_user.id,
+            note_text=form.note_text.data
+        )
+        db.session.add(new_note)
+        db.session.commit()
+        
+
+    return redirect(url_for('physician_dashboard'))
+
+@app.route('/remove_patient/<int:admission_id>', methods=['POST'])
+@login_required
+def remove_patient(admission_id):
+    if current_user.user_type != 'physician':
+        return redirect(url_for('dashboard'))
+
+    # Find the ER admission
+    er_admission = ERAdmission.query.get(admission_id)
+    if er_admission:
+        # Remove from ER admissions
+        db.session.delete(er_admission)
+        db.session.commit()
+        
+
+    return redirect(url_for('physician_dashboard'))
 
 # log out page 
 @app.route('/logout', methods=['GET', 'POST'])

@@ -1,14 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
-</head>
+    <title>Physician Dashboard</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap");
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+        }
+
+        .logo a {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .nav_links {
+            list-style: none;
+            display: flex;
+        }
+
+        .nav_links li {
+            margin: 0 15px;
+        }
+
+        .nav_links li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav_links li a:hover {
+            color: #e0e0e0;
+        }
+
+        .logout button {
+            background-color: rgba(0, 136, 169, 1);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout button:hover {
+            background-color: rgba(0, 136, 169, 0.8);
+        }
+
+        .content-area {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-area h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .patient-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .patient-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .patient-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .patient-card h3 {
+            color: #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .patient-card p {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .patient-card .note {
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .patient-card .note small {
+            color: #888;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .patient-card form {
+            margin-top: 15px;
+        }
+
+        .patient-card textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .patient-card .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .patient-card .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .patient-card .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
 <body>
     <header>
         <div class="logo">
@@ -17,18 +162,46 @@
         <nav>
             <ul class="nav_links">
                 <li><a href="{{url_for('physician_dashboard')}}">Home</a></li>
-                <li><a href="{{url_for('triage_form')}}">View Patients</a></li>
             </ul>
         </nav>
         <a class="logout" href="{{url_for('logout')}}"><button>Logout</button></a>
     </header>
     
     <div class="content-area">
-        <h2>Welcome to Mister Ed.</h2>
-        <p>Keep notes for your patients and keep medical history organized and accessible with Mister Ed.</p>
+        <h2>ER Patients</h2>
         
+        <div class="patient-cards">
+            {% for admission in er_admissions %}
+            <div class="patient-card">
+                <h3>Patient Information</h3>
+                <p><strong>Affected Area:</strong> {{ admission.affected_area }}</p>
+                <p><strong>Feeling:</strong> {{ admission.feeling }}</p>
+                <p><strong>Conditions:</strong> {{ admission.conditions }}</p>
+                <p><strong>Medical History:</strong> {{ admission.medical_history or 'No history' }}</p>
+                <p><strong>Medication:</strong> {{ admission.medication or 'No medication' }}</p>
+                
+                <h3>Physician Notes</h3>
+                {% set notes = admission_notes.get(admission.id, []) %}
+                {% for note in notes %}
+                    <div class="note">
+                        <p>{{ note.note_text }}</p>
+                        <small>Added on: {{ note.timestamp }}</small>
+                    </div>
+                {% endfor %}
+                
+                <h3>Add Note</h3>
+                <form method="POST" action="{{ url_for('add_physician_note', admission_id=admission.id) }}">
+                    {{ note_form.hidden_tag() }}
+                    {{ note_form.note_text(class="form-control", placeholder="Enter medical notes") }}
+                    {{ note_form.submit(class="btn") }}
+                </form>
+                
+                <form method="POST" action="{{ url_for('remove_patient', admission_id=admission.id) }}">
+                    <button type="submit" class="btn btn-danger">Remove Patient from ER</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-
 </body>
-
 </html>
