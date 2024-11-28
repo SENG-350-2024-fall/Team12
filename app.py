@@ -372,6 +372,11 @@ def emergency_departments():
 @app.route('/triage_form', methods=['GET', 'POST'])
 @login_required
 def triage_form():
+    # Check if user already submitted a form
+    if TriageEntry.query.filter_by(user_id=current_user.id, status='Waiting for Admission').first():
+        flash('A triage form has already been submitted. Please wait for updates.', 'danger')
+        return redirect(url_for('dashboard'))
+
     form = TriageForm(request.form)
     if form.validate_on_submit():
         
@@ -409,6 +414,11 @@ def triage_form():
 
     return render_template('triage_form.html', form=form)
 
+#@app.route('/view_notes', methods=['GET', 'POST'])
+#@login_required
+#def view_notes():
+#    visit_notes = VisitNote.query.filter_by(patient_id=current_user.id).all()
+#    return render_template('view_notes.html', visit_notes=visit_notes)
 
 #route for ping/echo
 @app.route('/admin/ping', methods=['GET'])
