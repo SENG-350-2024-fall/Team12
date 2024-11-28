@@ -40,10 +40,10 @@
             <tbody>
                 {% for note in visit_notes %}
                 <tr>
-                    <td>{{ note.admission_id }}</td>
+                    <td>{{ note.er_admission_id }}</td>
                     <td>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
                     <td>{{ note.physician_id }}</td>
-                    <td>{{ note.note }}</td>
+                    <td>{{ note.note_text }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
